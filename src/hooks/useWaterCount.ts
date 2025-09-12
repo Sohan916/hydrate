@@ -20,35 +20,20 @@ export const useWaterCount = () => {
   };
 
   const incrementWaterCount = async () => {
-    try {
-      const newCount = waterCount + 1;
-      const today = getTodayString();
-      await StorageService.saveWaterCount(today, newCount);
-      setWaterCount(newCount);
-      return newCount;
-    } catch (error) {
-      console.error("Error incrementing water count:", error);
-      throw error;
-    }
+    const newCount = waterCount + 1;
+    const today = getTodayString();
+    await StorageService.saveWaterCount(today, newCount);
+    setWaterCount(newCount);
+    return newCount;
   };
 
   const resetWaterCount = async () => {
     try {
       const today = getTodayString();
-      console.log("Resetting water count for today:", today);
-      console.log("Current water count before reset:", waterCount);
-
       await StorageService.resetWaterCount(today);
-
-      // Force set to 0 first
       setWaterCount(0);
-      console.log("Water count reset to 0 in state");
-
-      // Wait a bit then reload to ensure state is synchronized
-      setTimeout(async () => {
-        console.log("Reloading water count after reset...");
-        await loadWaterCount();
-      }, 100);
+      // Also reload to ensure we're synchronized with storage
+      await loadWaterCount();
     } catch (error) {
       console.error("Error resetting water count:", error);
       throw error;
@@ -60,5 +45,6 @@ export const useWaterCount = () => {
     incrementWaterCount,
     resetWaterCount,
     loadWaterCount,
+    refreshWaterCount: loadWaterCount,
   };
 };

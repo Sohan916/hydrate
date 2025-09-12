@@ -1,26 +1,24 @@
-import React from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Switch,
-  Alert,
-  ScrollView,
-  Platform,
-} from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { useSettings } from "@/src/hooks/useSettings";
+import { useWaterCount } from "@/src/hooks/useWaterCount";
+import { HOUR_OPTIONS, INTERVAL_OPTIONS } from "@/src/types/settings";
+import { formatHour } from "@/src/utils/time";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useSettings } from '@/src/hooks/useSettings';
-import { useWaterCount } from '@/src/hooks/useWaterCount';
-import { INTERVAL_OPTIONS, HOUR_OPTIONS } from '@/src/types/settings';
-import { formatHour } from '@/src/utils/time';
-
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function Settings() {
   const { settings, updateSettings } = useSettings();
   const { resetWaterCount } = useWaterCount();
-
 
   const updateInterval = async (minutes: number) => {
     const newSettings = { ...settings, intervalMinutes: minutes };
@@ -75,30 +73,25 @@ export default function Settings() {
         {
           text: "Reset",
           style: "destructive",
-          onPress: async () => {
-            try {
-              await resetWaterCount();
-              Alert.alert("Success", "Daily count has been reset");
-            } catch {
-              Alert.alert("Error", "Failed to reset daily count");
-            }
+          onPress: () => {
+            resetWaterCount();
           },
         },
       ]
     );
   };
 
-
   return (
     <ScrollView className="flex-1 bg-background">
       <StatusBar style="light" />
 
       {/* Header */}
-      <View className={`flex-row justify-between items-center px-5 py-4 ${Platform.OS === "ios" ? "pt-16" : "pt-10"}`}>
-        <TouchableOpacity
-          className="p-2"
-          onPress={() => router.back()}
-        >
+      <View
+        className={`flex-row justify-between items-center px-5 py-4 ${
+          Platform.OS === "ios" ? "pt-16" : "pt-10"
+        }`}
+      >
+        <TouchableOpacity className="p-2" onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text className="text-2xl font-bold text-primary">Settings</Text>
@@ -128,7 +121,9 @@ export default function Settings() {
         <View className="bg-primary/10 rounded-2xl p-5 mb-5 border border-primary/20">
           <View className="flex-row items-center mb-4">
             <Ionicons name="time" size={24} color="#4FC3F7" />
-            <Text className="text-lg font-bold text-white ml-3">Reminder Interval</Text>
+            <Text className="text-lg font-bold text-white ml-3">
+              Reminder Interval
+            </Text>
           </View>
           <Text className="text-sm text-gray mb-4 leading-5">
             How often you want to be reminded to drink water
@@ -139,16 +134,16 @@ export default function Settings() {
                 key={interval}
                 className={`bg-white/10 rounded-xl py-3 px-5 border border-white/20 ${
                   settings.intervalMinutes === interval
-                    ? 'bg-primary border-primary'
-                    : ''
+                    ? "bg-primary border-primary"
+                    : ""
                 }`}
                 onPress={() => updateInterval(interval)}
               >
                 <Text
                   className={`text-white text-base ${
                     settings.intervalMinutes === interval
-                      ? 'font-bold'
-                      : 'font-medium'
+                      ? "font-bold"
+                      : "font-medium"
                   }`}
                 >
                   {interval < 60 ? `${interval}m` : `${interval / 60}h`}
@@ -162,7 +157,9 @@ export default function Settings() {
         <View className="bg-primary/10 rounded-2xl p-5 mb-5 border border-primary/20">
           <View className="flex-row items-center mb-4">
             <Ionicons name="sunny" size={24} color="#4FC3F7" />
-            <Text className="text-lg font-bold text-white ml-3">Active Hours</Text>
+            <Text className="text-lg font-bold text-white ml-3">
+              Active Hours
+            </Text>
           </View>
           <Text className="text-sm text-gray mb-4 leading-5">
             Set the hours during which you want to receive reminders
@@ -181,14 +178,14 @@ export default function Settings() {
                   key={`start-${hour}`}
                   className={`bg-white/10 rounded-lg py-2 px-3 mr-2 border border-white/20 ${
                     settings.startHour === hour
-                      ? 'bg-primary border-primary'
-                      : ''
+                      ? "bg-primary border-primary"
+                      : ""
                   }`}
                   onPress={() => updateStartHour(hour)}
                 >
                   <Text
                     className={`text-white text-sm ${
-                      settings.startHour === hour ? 'font-bold' : ''
+                      settings.startHour === hour ? "font-bold" : ""
                     }`}
                   >
                     {formatHour(hour)}
@@ -210,15 +207,13 @@ export default function Settings() {
                 <TouchableOpacity
                   key={`end-${hour}`}
                   className={`bg-white/10 rounded-lg py-2 px-3 mr-2 border border-white/20 ${
-                    settings.endHour === hour
-                      ? 'bg-primary border-primary'
-                      : ''
+                    settings.endHour === hour ? "bg-primary border-primary" : ""
                   }`}
                   onPress={() => updateEndHour(hour)}
                 >
                   <Text
                     className={`text-white text-sm ${
-                      settings.endHour === hour ? 'font-bold' : ''
+                      settings.endHour === hour ? "font-bold" : ""
                     }`}
                   >
                     {formatHour(hour)}
@@ -233,7 +228,9 @@ export default function Settings() {
         <View className="bg-primary/10 rounded-2xl p-5 mb-5 border border-primary/20">
           <View className="flex-row items-center mb-4">
             <Ionicons name="bar-chart" size={24} color="#4FC3F7" />
-            <Text className="text-lg font-bold text-white ml-3">Daily Summary</Text>
+            <Text className="text-lg font-bold text-white ml-3">
+              Daily Summary
+            </Text>
           </View>
           <Text className="text-sm text-light-gray leading-5 mb-2">
             With your current settings, you&apos;ll be reminded every{" "}
@@ -249,7 +246,9 @@ export default function Settings() {
               {formatHour(settings.startHour)}
             </Text>{" "}
             and{" "}
-            <Text className="text-primary font-bold">{formatHour(settings.endHour)}</Text>
+            <Text className="text-primary font-bold">
+              {formatHour(settings.endHour)}
+            </Text>
             .
           </Text>
           <Text className="text-sm text-light-gray leading-5 mb-2">
@@ -268,7 +267,10 @@ export default function Settings() {
         <View className="bg-primary/10 rounded-2xl p-5 mb-5 border border-primary/20">
           <View className="flex-row items-center mb-4">
             <Ionicons name="refresh" size={24} color="#ff6b6b" />
-            <Text className="text-lg font-bold ml-3" style={{ color: '#ff6b6b' }}>
+            <Text
+              className="text-lg font-bold ml-3"
+              style={{ color: "#ff6b6b" }}
+            >
               Reset Data
             </Text>
           </View>
@@ -276,11 +278,12 @@ export default function Settings() {
             className="bg-error/20 rounded-xl py-3 items-center border border-error mt-2.5"
             onPress={resetDailyCount}
           >
-            <Text className="text-error text-base font-semibold">Reset Today&apos;s Count</Text>
+            <Text className="text-error text-base font-semibold">
+              Reset Today&apos;s Count
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
   );
 }
-

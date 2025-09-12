@@ -3,22 +3,17 @@ import { useSettings } from "@/src/hooks/useSettings";
 import { useWaterCount } from "@/src/hooks/useWaterCount";
 import { NotificationService } from "@/src/services/notifications";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   // States.
   const [timeLeft, setTimeLeft] = useState(0);
   const [nextReminderTime, setNextReminderTime] = useState<Date | null>(null);
   const { settings } = useSettings();
-  const { waterCount, incrementWaterCount } = useWaterCount();
+  const { waterCount, incrementWaterCount, refreshWaterCount } = useWaterCount();
 
   // Helpers.
   const scheduleNextReminder = useCallback(async () => {
@@ -66,6 +61,13 @@ export default function Index() {
     return () => clearInterval(interval);
   }, [nextReminderTime, updateCountdown]);
 
+  // Refresh water count when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshWaterCount();
+    }, [refreshWaterCount])
+  );
+
   // Handlers.
   const handleDrinkWater = useCallback(async () => {
     await incrementWaterCount();
@@ -81,7 +83,11 @@ export default function Index() {
   };
 
   return (
-    <View className={`flex-1 bg-background ${Platform.OS === "ios" ? "pt-12" : "pt-8"}`}>
+    <View
+      className={`flex-1 bg-background ${
+        Platform.OS === "ios" ? "pt-12" : "pt-8"
+      }`}
+    >
       <StatusBar style="light" />
 
       {/* Header */}
